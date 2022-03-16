@@ -22,15 +22,15 @@ public class MovieDaoImpl implements MovieDao {
 	public MovieDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
-	
+
 	@Override
-	public Movie getMovie(String name) throws Exception{
+	public Movie getMovie(String name) throws Exception {
 		List<Movie> movies = new ArrayList<>();
-		jdbcTemplate.query(SqlConstants.GET_ALL_MOVIES, (ResultSet rs) -> {
-			if(rs.getString("NAME").equals(name)) {
-				movies.add(new Movie(rs.getString("NAME"), rs.getString("DIRECTOR"), rs.getString("LANG"),
-						rs.getFloat("RATING")));
-			}
+		String names[] = {name};
+		int types[] = {Types.VARCHAR};
+		jdbcTemplate.query("SELECT * FROM movies WHERE movie_name = ?",names,types, (ResultSet rs) -> {
+			movies.add(new Movie(rs.getString("movie_name"), rs.getString("director"), rs.getString("lang"),
+					rs.getFloat("rating")));
 		});
 		return movies.get(0);
 	}
@@ -39,8 +39,8 @@ public class MovieDaoImpl implements MovieDao {
 	public List<Movie> getAllMovies() {
 		List<Movie> movies = new ArrayList<>();
 		jdbcTemplate.query(SqlConstants.GET_ALL_MOVIES, (ResultSet rs) -> {
-			Movie movie = new Movie(rs.getString("NAME"), rs.getString("DIRECTOR"), rs.getString("LANG"),
-					rs.getFloat("RATING"));
+			Movie movie = new Movie(rs.getString("movie_name"), rs.getString("director"), rs.getString("lang"),
+					rs.getFloat("rating"));
 			movies.add(movie);
 		});
 		return movies;
@@ -48,7 +48,7 @@ public class MovieDaoImpl implements MovieDao {
 
 	@Override
 	public String addMovie(Movie movie) throws Exception {
-		String sql = "INSERT INTO MOVIES(NAME,DIRECTOR,LANG,RATING)" + " VALUES(?,?,?,?)";
+		String sql = "INSERT INTO MOVIES(movie_name,director,lang,rating)" + " VALUES(?,?,?,?)";
 		Object[] obj = { movie.getName(), movie.getDirector(), movie.getLang(), movie.getRating() };
 		int[] types = { Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.FLOAT };
 		jdbcTemplate.update(sql, obj, types);
@@ -57,20 +57,24 @@ public class MovieDaoImpl implements MovieDao {
 	}
 
 	@Override
-	public Movie updateMovie(String name, Movie movie) throws Exception{
-		String sql = "UPDATE MOVIES SET NAME=?,DIRECTOR=?,LANG=?,RATING=? WHERE NAME = ?";
-		Object[] obj = { movie.getName(), movie.getDirector(), movie.getLang(), movie.getRating(), name };
-		int[] types = { Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.FLOAT, Types.VARCHAR };
-		jdbcTemplate.update(sql, obj, types);
+	public Movie updateMovie(String name, Movie movie) throws Exception {
+		if (movie.getName().equalsIgnoreCase(name)) {
+			String sql = "UPDATE MOVIES SET movie_name=?,director=?,lang=?,rating=? WHERE movie_name = ?";
+			Object[] obj = { movie.getName(), movie.getDirector(), movie.getLang(), movie.getRating(), name };
+			int[] types = { Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.FLOAT, Types.VARCHAR };
+			jdbcTemplate.update(sql, obj, types);
+		} else {
+			throw new Exception("Can't update name of movie");
+		}
 		return getMovie(movie.getName());
 	}
 
 	@Override
 	public Movie deleteMovie(String name) throws Exception {
 		Movie movie = getMovie(name);
-		String sql = "DELETE FROM MOVIES WHERE NAME=?";
-		Object[] obj = {name};
-		int[] types = {Types.VARCHAR};
+		String sql = "DELETE FROM MOVIES WHERE movie_name=?";
+		Object[] obj = { name };
+		int[] types = { Types.VARCHAR };
 		jdbcTemplate.update(sql, obj, types);
 		return movie;
 	}
