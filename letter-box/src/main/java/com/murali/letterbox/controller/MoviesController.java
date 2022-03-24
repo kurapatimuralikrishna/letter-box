@@ -16,6 +16,17 @@ import com.murali.letterbox.model.ErrorMovie;
 import com.murali.letterbox.model.Movie;
 import com.murali.letterbox.service.MovieService;
 
+/* 
+ * A login page -> gives access to other urls.
+ * Problem with get request is, can it even accept a body?. 
+ * And why should a login be related to a get request anyways.
+ * Application must remember the user until logout/termination.
+ * So, an object generated at runtime should get the job done.
+ * All urls related to movies should be public and unrelated to login, 
+ 		except for a request on movies page that lets a user add user review.
+ * When we land on a movie page, should it display all user reviews related to this movie?
+ */
+
 @RestController
 @RequestMapping("letterbox")
 public class MoviesController {
@@ -39,7 +50,7 @@ public class MoviesController {
 			return new ErrorMovie(e.getClass().toString(),e.getMessage());
 		}
 	}
-
+	
 	@PostMapping(value = "/movies/addmovie")
 	public String addMovie(@RequestBody Movie movie) {
 		try {
