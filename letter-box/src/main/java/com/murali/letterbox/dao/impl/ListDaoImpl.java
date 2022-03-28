@@ -1,6 +1,8 @@
 package com.murali.letterbox.dao.impl;
 
 import java.sql.ResultSet;
+import java.sql.SQLDataException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,30 @@ public class ListDaoImpl implements ListDao{
 	}
 	
 	@Override
-	public List<MovieList> getAllMovieLists() {
+	public MovieList getList(int userId, String name) throws Exception {
+		MovieList list = null;
+		Object args[] = {userId,name};
+		int[] types = {Types.INTEGER, Types.VARCHAR};
+		list = jdbcTemplate.query((SqlConstants.GET_LIST),args,types,(ResultSet rs) -> {
+			MovieList newList = null;
+			List<String> names = new ArrayList<>();
+			if(rs.next()) {
+				names.add(rs.getString(4));
+				newList = new MovieList(rs.getInt(1), rs.getInt(2), rs.getString(3), names);
+			}
+			else return null;
+			while(rs.next()) {
+				newList.getMovieNames().add(rs.getString(4));
+			}
+			return newList;
+		}
+		);
+		if(list==null)  throw new SQLDataException("No such Entry Exists");
+		return list;
+	}
+	
+	@Override
+	public List<MovieList> getAllLists() {
 		List<MovieList> list = new ArrayList<>();
 		
 		ResultSetExtractor <List<MovieList>> rsh = (ResultSet rs) -> {
@@ -33,6 +58,7 @@ public class ListDaoImpl implements ListDao{
 				names.add(rs.getString(6));
 				list2.add(new MovieList(rs.getInt(1), rs.getInt(2), rs.getString(3), names));
 			}
+			else return null;
 			while(rs.next()) {
 				if(rs.getInt(1) == list2.get(list2.size()-1).getListId()) {
 					list2.get(list2.size()-1).addMovie(rs.getString(6));
@@ -51,13 +77,15 @@ public class ListDaoImpl implements ListDao{
 	}
 
 	@Override
-	public String addMovieList(MovieList list) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public String createList(MovieList list) throws Exception {
+		Object args[] = {list.getUserId(),list.getListName()};
+		int[] types = {Types.INTEGER,Types.VARCHAR};
+		jdbcTemplate.update(SqlConstants.CREATE_NEW_LIST, args, types);
+		return "Done";
 	}
-
+	
 	@Override
-	public MovieList getMovieList(String name) throws Exception {
+	public String addMovieToList(int userId, String listName, String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -74,4 +102,6 @@ public class ListDaoImpl implements ListDao{
 		return null;
 	}
 
+
+	
 }
