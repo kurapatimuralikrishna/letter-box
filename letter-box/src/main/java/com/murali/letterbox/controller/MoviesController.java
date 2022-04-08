@@ -43,10 +43,12 @@ public class MoviesController {
 	public Movie getMovie(@PathVariable String name) {
 		// get a specific movie
 		try {
-			return service.getMovie(name);
+			Movie movie = service.getMovie(name);
+			if(movie!=null) return movie;
+			else throw new Exception("No such movie");
 		}
 		catch(Exception e) {
-			System.err.println("Unexpected Exception: " + e.getClass().toString() + "\n" + e.getMessage());
+			e.printStackTrace();
 			return new ErrorMovie(e.getClass().toString(),e.getMessage());
 		}
 	}
@@ -55,7 +57,9 @@ public class MoviesController {
 	public String addMovie(@RequestBody Movie movie) {
 		try {
 			return service.addMovie(movie);
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
 			return "Unexpected Exception: " + e.getClass().toString() + "\n" + e.getMessage();
 		}
 	}
@@ -64,8 +68,9 @@ public class MoviesController {
 	public Movie putMovie(@PathVariable String name, @RequestBody Movie movie) {
 		try {
 			return service.updateMovie(name, movie);
-		} catch (Exception e) {
-			System.err.println("Unexpected Exception: " + e.getClass().toString() + "\n" + e.getMessage());
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
 			return new ErrorMovie(e.getClass().toString(),e.getMessage());
 		}
 	}
@@ -73,9 +78,12 @@ public class MoviesController {
 	@DeleteMapping("/movies/{name}/delete")
 	public Movie deleteMovie(@PathVariable String name) {
 		try {
-			return service.deleteMovie(name);
-		} catch (Exception e) {
-			System.err.println("Unexpected Exception: " + e.getClass().toString() + "\n" + e.getMessage());
+			Movie movie = service.deleteMovie(name);
+			if(movie!=null) return movie;
+			else throw new Exception("No such movie");
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
 			return new ErrorMovie(e.getClass().toString(),e.getMessage());
 		}
 	}

@@ -25,14 +25,15 @@ public class MovieDaoImpl implements MovieDao {
 
 	@Override
 	public Movie getMovie(String name) throws Exception {
-		List<Movie> movies = new ArrayList<>();
-		String names[] = {name};
-		int types[] = {Types.VARCHAR};
-		jdbcTemplate.query("SELECT * FROM movies WHERE movie_name = ?",names,types, (ResultSet rs) -> {
-			movies.add(new Movie(rs.getString("movie_name"), rs.getString("director"), rs.getString("lang"),
-					rs.getFloat("rating")));
+		Object[] names = {name};
+		int[] types = {Types.VARCHAR};
+		Movie movie = jdbcTemplate.query("SELECT * FROM movies WHERE movie_name = ?",names,types, (ResultSet rs) -> {
+			if(rs.next())
+				return new Movie(rs.getString("movie_name"), rs.getString("director"), rs.getString("lang"),
+						rs.getFloat("rating"));
+			else return null;
 		});
-		return movies.get(0);
+		return movie;
 	}
 
 	@Override

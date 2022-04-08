@@ -35,7 +35,7 @@ public class SqlConstants {
 			+ "WHERE list_id=?;";
 
 	public static final String DELETE_MOVIE_FROMLIST = 
-			"DELETE FROM MOVIE_LISTS\r\n"
+			"DELETE FROM movies_inlist\r\n"
 			+ "WHERE list_id=? AND movie_name=?;";
 
 	public static final String DELETE_MOVIE_LIST = 

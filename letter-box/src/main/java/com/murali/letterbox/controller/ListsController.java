@@ -49,8 +49,8 @@ public class ListsController {
 		}
 	}
 	
-	@PostMapping("/lists/{uid}/{lname}/addMovie")
-	public String addMovieToList(@PathVariable("uid") int uid, @PathVariable("lname") String lname, @RequestBody String name) {
+	@PostMapping("/lists/{uid}/{lname}/addmovie/{mname}")
+	public String addMovieToList(@PathVariable("uid") int uid, @PathVariable("lname") String lname, @PathVariable("mname") String name) {
 		try {
 			return service.addMovieToList(uid,lname,name);
 		} catch (Exception e) {
@@ -59,8 +59,8 @@ public class ListsController {
 		}
 	}
 	
-	@PutMapping("/lists/{uid}/{lname}/removeMovie")
-	public String removeMovieFromList(@PathVariable("uid") int uid, @PathVariable("lname") String lname, @RequestBody String movieName) {
+	@PutMapping("/lists/{uid}/{lname}/removemovie/{mname}")
+	public String removeMovieFromList(@PathVariable("uid") int uid, @PathVariable("lname") String lname, @PathVariable("mname") String movieName) {
 		try {
 			return service.removeMovieFromList(uid,lname,movieName);
 		}

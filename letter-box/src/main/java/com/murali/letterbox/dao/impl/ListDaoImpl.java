@@ -37,12 +37,12 @@ public class ListDaoImpl implements ListDao {
 			MovieList newList = null;
 			List<String> names = new ArrayList<>();
 			if (rs.next()) {
-				names.add(rs.getString(6));
+				if(rs.getString(6)!=null) names.add(rs.getString(6));
 				newList = new MovieList(rs.getInt(1), rs.getInt(2), rs.getString(3), names);
 			} else
 				return null;
 			while (rs.next()) {
-				newList.getMovieNames().add(rs.getString(6));
+				newList.addMovie(rs.getString(6));
 			}
 			return newList;
 		});
@@ -57,16 +57,16 @@ public class ListDaoImpl implements ListDao {
 			List<MovieList> list2 = new ArrayList<>();
 			if (rs.next()) {
 				List<String> names = new ArrayList<>();
-				names.add(rs.getString(6));
+				if(rs.getString(6)!=null) names.add(rs.getString(6));
 				list2.add(new MovieList(rs.getInt(1), rs.getInt(2), rs.getString(3), names));
 			} else
 				return null;
 			while (rs.next()) {
 				if (rs.getInt(1) == list2.get(list2.size() - 1).getListId()) {
-					list2.get(list2.size() - 1).addMovie(rs.getString(6));
+					if(rs.getString(6)!=null) list2.get(list2.size() - 1).addMovie(rs.getString(6));
 				} else {
 					List<String> names = new ArrayList<>();
-					names.add(rs.getString(6));
+					if(rs.getString(6)!=null) names.add(rs.getString(6));
 					list2.add(new MovieList(rs.getInt(1), rs.getInt(2), rs.getString(3), names));
 				}
 			}
@@ -104,7 +104,7 @@ public class ListDaoImpl implements ListDao {
 		});
 		if (lid == 0)
 			throw new Exception("No such list");
-		movieDao.getMovie(name);
+		if(movieDao.getMovie(name)==null) throw new Exception("No such movie");
 		String str = "SELECT movie_name\r\n" + "FROM movies_inlist\r\n" + "WHERE list_id=? AND movie_name=?;";
 		Object[] args5 ={lid,name};
 		int[] types5 = { Types.INTEGER, Types.VARCHAR };
@@ -162,8 +162,10 @@ public class ListDaoImpl implements ListDao {
 		jdbcTemplate.update(SqlConstants.UPDATE_LIST_NAME, args2, types2);
 		Object[] args3 = { lid };
 		int[] types3 = { Types.INTEGER };
+		for(String k:names) {
+			if(movieDao.getMovie(k)==null) throw new Exception("List contains invalid movies)");
+		}
 		jdbcTemplate.update(SqlConstants.DELETE_MOVIES_OFLIST, args3, types3);
-		// TODO check data-integrity
 		for (String k : names) {
 			Object[] args4 = { lid, k };
 			int[] types4 = { Types.INTEGER, Types.VARCHAR };
