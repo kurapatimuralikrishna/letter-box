@@ -3,6 +3,7 @@ package com.murali.letterbox.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ import com.murali.letterbox.service.MovieService;
  		except for a request on movies page that lets a user add user review.
  * When we land on a movie page, should it display all user reviews related to this movie?
  */
-
+@CrossOrigin(origins="http://localhost:3000")
 @RestController
 @RequestMapping("letterbox")
 public class MoviesController {
