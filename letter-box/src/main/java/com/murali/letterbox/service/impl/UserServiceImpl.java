@@ -28,4 +28,24 @@ public class UserServiceImpl implements  UserService{
 		return dao.newSignUp(form);
 	}
 
+	@Override
+	public User updateUser(int uid, NewUserForm form) throws Exception {
+		return dao.updateUser(uid,form);
+	}
+
+	@Override
+	public User getUser(int uid) throws Exception {
+		return dao.getUser(uid);
+	}
+
+	@Override
+	public User changePassword(int uid, String[] passwords) throws Exception {
+		return dao.changePassword(uid,passwords);
+	}
+
+	@Override
+	public User deleteUser(int uid, String[] passwords) throws Exception {
+		return dao.deleteUser(uid,passwords);
+	}
+
 }
