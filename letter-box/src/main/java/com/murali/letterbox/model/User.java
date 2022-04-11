@@ -1,29 +1,23 @@
 package com.murali.letterbox.model;
 
 public class User {
-	private String userId;
-	private String password;
+	private int userId;
+	private String userName;
 	private String phoneNumber;
 	private String city;
 	private String description;
 
-	public User(String userId, String password1, String password2, String phoneNumber, String city,
-			String description) {
+	public User(int userId, String userName, String phoneNumber, String city, String description) {
 		super();
 		this.userId = userId;
-		if (password1.equals(password2))
-			this.password = password1;
+		this.userName = userName;
 		this.phoneNumber = phoneNumber;
 		this.city = city;
 		this.description = description;
 	}
 
-	public String getUserId() {
+	public int getUserId() {
 		return userId;
-	}
-
-	private String getPassword() {
-		return password;
 	}
 
 	public String getPhoneNumber() {
@@ -38,15 +32,8 @@ public class User {
 		return description;
 	}
 
-	public void setUserId(String userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
-	}
-
-	public void setPassword(String password, String oldPassword) throws Exception {
-		if (getPassword().equals(oldPassword)) {
-			this.password = password;
-		} else
-			throw new Exception("Check password");
 	}
 
 	public void setPhoneNumber(String phoneNumber) {
@@ -59,5 +46,13 @@ public class User {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 }
