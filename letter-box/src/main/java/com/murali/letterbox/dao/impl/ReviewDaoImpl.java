@@ -7,12 +7,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
+import com.murali.letterbox.constants.ReviewConstants;
 import com.murali.letterbox.dao.ListDao;
 import com.murali.letterbox.dao.MovieDao;
 import com.murali.letterbox.dao.ReviewDao;
+import com.murali.letterbox.model.Movie;
 import com.murali.letterbox.model.MovieList;
 import com.murali.letterbox.model.Review;
 
@@ -34,7 +35,7 @@ public class ReviewDaoImpl implements ReviewDao {
 	public Review getReview(int uid, String mname) {
 		Object[] args = { uid, mname };
 		int[] types = { Types.INTEGER, Types.INTEGER };
-		return jdbcTemplate.query("SELECT * FROM movie_reviews WHERE user_id=? AND movie_name = ?;", args, types,
+		return jdbcTemplate.query(ReviewConstants.GET_REVIEW, args, types,
 				(ResultSet rs) -> {
 					if (rs.next())
 						return new Review(rs.getInt(1), rs.getString(2), rs.getFloat(3), rs.getString(4));
@@ -45,42 +46,79 @@ public class ReviewDaoImpl implements ReviewDao {
 
 	@Override
 	public List<Review> getMovieReviews(String mname) throws Exception {
-		if(movieDao.getMovie(mname)==null) throw new Exception("No such movie"); 
+		if (movieDao.getMovie(mname) == null)
+			throw new Exception("No such movie");
 		Object[] args = { mname };
 		int[] types = { Types.INTEGER };
-		return jdbcTemplate.query("SELECT * FROM movie_reviews WHERE movie_name = ?;", args, types,
-				(ResultSet rs) -> {
-					List<Review> list = new ArrayList<>();
+		return jdbcTemplate.query(ReviewConstants.GET_MOVIE_REVIEWS, args, types, (ResultSet rs) -> {
+			List<Review> list = new ArrayList<>();
+			while (rs.next())
+				list.add(new Review(rs.getInt(1), rs.getString(2), rs.getFloat(3), rs.getString(4)));
+			return list;
+		});
+	}
+
+	@Override
+	public List<Float> getAvgMovieRating(String mname) throws Exception {
+		Movie movie = movieDao.getMovie(mname);
+		if(movie==null) throw new Exception("No such movie");
+		return jdbcTemplate.query(ReviewConstants.GET_MOVIE_RATINGS,(ResultSet rs)->{
+			List<Float> list = new ArrayList<>();
+			while(rs.next()) list.add(rs.getFloat(1));
+			return list;
+		});
+	}
+
+	@Override
+	public List<Float> getListUserRatings(int uid, String lname) throws Exception {
+		MovieList list = listDao.getList(uid, lname);
+		if (list == null)
+			throw new Exception("No such list");
+		Object[] args = { list.getListId() };
+		int[] types = { Types.INTEGER };
+		return jdbcTemplate.query(ReviewConstants.GET_LIST_RATINGS, args, types, (ResultSet rs) -> {
+					List<Float> list2 = new ArrayList<>();
 					while (rs.next())
-						list.add(new Review(rs.getInt(1), rs.getString(2), rs.getFloat(3), rs.getString(4)));
-					return list;
+						list2.add(rs.getFloat(1));
+					return list2;
 				});
 	}
 
 	@Override
-	public List<List<Float>> getListUserRatings(int uid, String lname) throws Exception {
-		if(listDao.getList(uid, lname)==null) throw new Exception("No such list");
-		
-		ResultSetExtractor<List<MovieList>> rsh = (ResultSet rs) -> {
-			List<List<Float>> list2 = new ArrayList<>();
-			if (rs.next()) {
-				List<Float> ratings = new ArrayList<>();
-				if(rs.getString(6)!=null) ratings.add(movieDao.getMovie(rs.getString(6));
-				list2.add(new MovieList(rs.getInt(1), rs.getInt(2), rs.getString(3), names));
-			} else
-				return null;
-			while (rs.next()) {
-				if (rs.getInt(1) == list2.get(list2.size() - 1).getListId()) {
-					if(rs.getString(6)!=null) list2.get(list2.size() - 1).addMovie(rs.getString(6));
-				} else {
-					List<String> names = new ArrayList<>();
-					if(rs.getString(6)!=null) names.add(rs.getString(6));
-					list2.add(new MovieList(rs.getInt(1), rs.getInt(2), rs.getString(3), names));
-				}
-			}
-			return list2;
-		};
-		return null;
+	public List<Review> getAllRveiews() {
+		return jdbcTemplate.query(ReviewConstants.GET_ALL_REVIEWS, (ResultSet rs)->{
+			List<Review> list = new ArrayList<>();
+			while(rs.next()) list.add(new Review(rs.getInt(1),rs.getString(2),rs.getFloat(3),rs.getString(4)));
+			return list;
+		});
+	}
+
+	@Override
+	public Review postReview(int uid, String mname, Review review) throws Exception {
+		if(getReview(uid,mname)!=null) throw new Exception("Such a review aldready exists");
+		Object[] args = {review.getUserId(),review.getMovieName(),review.getRating(),review.getReview()};
+		int[] types = {Types.INTEGER,Types.VARCHAR,Types.FLOAT,Types.VARCHAR};
+		jdbcTemplate.update(ReviewConstants.POST_REVIEW,args,types);
+		return getReview(uid,mname);
+	}
+
+	@Override
+	public Review updateReview(int uid, String mname, Review review) throws Exception {
+		if(getReview(uid,mname)==null) throw new Exception("No such review");
+		Object[] args = {review.getRating(),review.getReview()};
+		int[] types = {Types.FLOAT,Types.VARCHAR};
+		jdbcTemplate.update(ReviewConstants.UPDATE_REVIEW,args,types);
+		return getReview(uid,mname);
+	}
+
+	@Override
+	public Review deleteReview(int uid, String mname) throws Exception {
+		Review review = getReview(uid,mname);
+		if(review==null) throw new Exception("No such review");
+		Object[] args = {review.getUserId(),review.getMovieName()};
+		int[] types = {Types.INTEGER,Types.VARCHAR};
+		jdbcTemplate.update(ReviewConstants.DELETE_REVIEW,args,types);
+		return review;
 	}
 
 }

@@ -11,4 +11,14 @@ public interface ReviewService {
 	List<Review> getMovieReviews(String mname) throws Exception;
 
 	float getAvgListRating(int uid, String lname) throws Exception;
+
+	float getAvgMovieRating(String mname) throws Exception;
+
+	List<Review> getAllReviews();
+
+	Review postReview(int uid, String mname, Review review) throws Exception;
+
+	Review updateReview(int uid, String mname, Review review) throws Exception;
+
+	Review deleteReview(int uid, String mname) throws Exception;
 }

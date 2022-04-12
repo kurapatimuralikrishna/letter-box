@@ -10,6 +10,16 @@ public interface ReviewDao {
 
 	List<Review> getMovieReviews(String mname) throws Exception;
 
-	List<List<Float>> getListUserRatings(int uid, String lname) throws Exception;
+	List<Float> getListUserRatings(int uid, String lname) throws Exception;
+
+	List<Float> getAvgMovieRating(String mname) throws Exception;
+
+	List<Review> getAllRveiews();
+
+	Review postReview(int uid, String mname, Review review) throws Exception;
+
+	Review updateReview(int uid, String mname, Review review) throws Exception;
+
+	Review deleteReview(int uid, String mname) throws Exception;
 
 }

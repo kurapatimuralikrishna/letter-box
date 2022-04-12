@@ -1,6 +1,5 @@
 package com.murali.letterbox.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +11,13 @@ import com.murali.letterbox.service.ReviewService;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
-	
+
 	@Autowired
 	ReviewDao dao;
 
 	@Override
 	public Review getReview(int uid, String mname) {
-		return dao.getReview(uid,mname);
+		return dao.getReview(uid, mname);
 	}
 
 	@Override
@@ -28,16 +27,50 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public float getAvgListRating(int uid, String lname) throws Exception {
-		List<List<Float>> list = dao.getListUserRatings(uid,lname);
-		float sum;
-		int count;
-		for(List<Float> l:list) {
-			for(Float f : l) {
-				sum+=f;
-				count++;
-			}
+		List<Float> list = dao.getListUserRatings(uid, lname);
+		float sum = 0.0f;
+		int count = 0;
+		for (Float f : list) {
+			sum += f;
+			count++;
 		}
-		return sum/count;
+		if (count == 0)
+			return -1;
+		return sum / count;
 	}
-	
+
+	@Override
+	public float getAvgMovieRating(String mname) throws Exception {
+		List<Float> list = dao.getAvgMovieRating(mname);
+		float sum = 0.0f;
+		int count = 0;
+		for (Float f : list) {
+			sum += f;
+			count++;
+		}
+		if (count == 0)
+			return -1;
+		return sum / count;
+	}
+
+	@Override
+	public List<Review> getAllReviews() {
+		return dao.getAllRveiews();
+	}
+
+	@Override
+	public Review postReview(int uid, String mname, Review review) throws Exception {
+		return dao.postReview(uid,mname,review);
+	}
+
+	@Override
+	public Review updateReview(int uid, String mname, Review review) throws Exception {
+		return dao.updateReview(uid,mname,review);
+	}
+
+	@Override
+	public Review deleteReview(int uid, String mname) throws Exception {
+		return dao.deleteReview(uid,mname);
+	}
+
 }
