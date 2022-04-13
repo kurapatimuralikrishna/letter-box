@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import com.murali.letterbox.constants.CommentConstants;
 import com.murali.letterbox.dao.CommentDao;
@@ -16,6 +17,7 @@ import com.murali.letterbox.model.Comment;
 import com.murali.letterbox.model.MovieList;
 import com.murali.letterbox.model.User;
 
+@Component
 public class CommentDaoImpl implements CommentDao {
 
 	private final JdbcTemplate jdbcTemplate;
