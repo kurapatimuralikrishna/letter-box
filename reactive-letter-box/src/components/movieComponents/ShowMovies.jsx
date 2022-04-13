@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MovieService from "../../services/MovieService";
 import "./movies.css";
-
 const ShowMovies = () => {
   const [movies, setMovies] = useState([]);
   useEffect(() => {
@@ -12,7 +11,7 @@ const ShowMovies = () => {
   return (
     <div>
       <div>
-        <h2 className="text-centre">Movie List</h2>
+        <h2>Movie List</h2>
         <div className="row">
           <table id="movies">
             <thead>
@@ -26,7 +25,11 @@ const ShowMovies = () => {
             <tbody>
               {movies.map((movies) => (
                 <tr key={movies.name}>
-                  <td>{movies.name}</td>
+                  <td>
+                    <a href={"movies/showmovie/" + movies.name}>
+                      {movies.name}
+                    </a>
+                  </td>
                   <td>{movies.director}</td>
                   <td>{movies.lang}</td>
                   <td>{movies.rating}</td>

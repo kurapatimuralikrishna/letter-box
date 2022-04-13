@@ -11,4 +11,12 @@ public interface UserService {
 
 	User newSignUp(NewUserForm form) throws Exception;
 
+	User updateUser(int uid, NewUserForm form) throws Exception;
+
+	User getUser(int uid) throws Exception;
+
+	User changePassword(int uid, String[] passwords) throws Exception;
+
+	User deleteUser(int uid, String[] passwords) throws Exception;
+
 }
