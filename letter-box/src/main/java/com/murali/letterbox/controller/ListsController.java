@@ -25,9 +25,7 @@ public class ListsController {
 	@GetMapping("/lists/{uid}/{lname}")
 	public MovieList getList(@PathVariable("uid") int uid, @PathVariable("lname") String lname) {
 		try {
-			MovieList list =  service.getList(uid, lname);
-			if(list==null) throw new Exception("No such data exists");
-			return list;
+			return service.getList(uid, lname);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ErrorList(e);

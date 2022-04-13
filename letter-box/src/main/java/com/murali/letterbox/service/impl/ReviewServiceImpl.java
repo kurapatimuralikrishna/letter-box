@@ -16,8 +16,11 @@ public class ReviewServiceImpl implements ReviewService {
 	ReviewDao dao;
 
 	@Override
-	public Review getReview(int uid, String mname) {
-		return dao.getReview(uid, mname);
+	public Review getReview(int uid, String mname) throws Exception{
+		Review view = dao.getReview(uid, mname);
+		if (view != null)
+			return view;
+		throw new Exception("No such review");
 	}
 
 	@Override

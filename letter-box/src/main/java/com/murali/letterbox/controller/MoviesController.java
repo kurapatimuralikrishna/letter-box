@@ -44,9 +44,7 @@ public class MoviesController {
 	public Movie getMovie(@PathVariable String name) {
 		// get a specific movie
 		try {
-			Movie movie = service.getMovie(name);
-			if(movie!=null) return movie;
-			else throw new Exception("No such movie");
+			return service.getMovie(name);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -79,9 +77,7 @@ public class MoviesController {
 	@DeleteMapping("/movies/{name}/delete")
 	public Movie deleteMovie(@PathVariable String name) {
 		try {
-			Movie movie = service.deleteMovie(name);
-			if(movie!=null) return movie;
-			else throw new Exception("No such movie");
+			return service.deleteMovie(name);
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

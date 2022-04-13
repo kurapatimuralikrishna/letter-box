@@ -6,7 +6,7 @@ import com.murali.letterbox.model.Review;
 
 public interface ReviewService {
 
-	Review getReview(int uid, String mname);
+	Review getReview(int uid, String mname) throws Exception;
 
 	List<Review> getMovieReviews(String mname) throws Exception;
 
