@@ -28,10 +28,7 @@ public class ReviewsController {
 	@GetMapping("/reviews/{uid}/{mname}")
 	public Review getReview(@PathVariable("uid") int uid, @PathVariable("mname") String mname) {
 		try {
-			Review view = service.getReview(uid, mname);
-			if (view != null)
-				return view;
-			throw new Exception("No such review");
+			return service.getReview(uid, mname);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ErrorReview(e);

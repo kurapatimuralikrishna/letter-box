@@ -26,8 +26,9 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public Movie getMovie(String name) throws Exception {
-		
-		return dao.getMovie(name);
+		Movie movie = dao.getMovie(name);
+		if(movie!=null) return movie;
+		else throw new Exception("No such movie");
 	}
 
 	@Override
@@ -37,7 +38,9 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public Movie deleteMovie(String name) throws Exception {
-		return dao.deleteMovie(name);
+		Movie movie = dao.deleteMovie(name);
+		if(movie!=null) return movie;
+		else throw new Exception("No such movie");
 	}
 
 }

@@ -35,7 +35,9 @@ public class UserServiceImpl implements  UserService{
 
 	@Override
 	public User getUser(int uid) throws Exception {
-		return dao.getUser(uid);
+		User user = dao.getUser(uid);
+		if(user!=null) return user;
+		else throw new Exception("Check user id");
 	}
 
 	@Override

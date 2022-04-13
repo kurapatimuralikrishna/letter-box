@@ -27,7 +27,9 @@ public class ListServiceImpl implements ListService {
 
 	@Override
 	public MovieList getList(int userId, String name) throws Exception {
-		return dao.getList(userId, name);
+		MovieList list =  dao.getList(userId, name);
+		if(list==null) throw new Exception("No such data exists");
+		return list;
 	}
 
 	@Override

@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
-import com.murali.letterbox.constants.SqlConstants;
+import com.murali.letterbox.constants.ListConstants;
 import com.murali.letterbox.dao.ListDao;
 import com.murali.letterbox.dao.MovieDao;
 import com.murali.letterbox.model.MovieList;
@@ -33,7 +33,7 @@ public class ListDaoImpl implements ListDao {
 		MovieList list = null;
 		Object args[] = { userId, lname };
 		int[] types = { Types.INTEGER, Types.VARCHAR };
-		list = jdbcTemplate.query((SqlConstants.GET_LIST), args, types, (ResultSet rs) -> {
+		list = jdbcTemplate.query((ListConstants.GET_LIST), args, types, (ResultSet rs) -> {
 			MovieList newList = null;
 			List<String> names = new ArrayList<>();
 			if (rs.next()) {
@@ -73,7 +73,7 @@ public class ListDaoImpl implements ListDao {
 			return list2;
 		};
 
-		list = jdbcTemplate.query(SqlConstants.GET_ALL_LISTS, rsh);
+		list = jdbcTemplate.query(ListConstants.GET_ALL_LISTS, rsh);
 		return list;
 	}
 
@@ -84,7 +84,7 @@ public class ListDaoImpl implements ListDao {
 			throw new SQLDataException("Such a list aldready exists");
 		Object args[] = { list.getUserId(), list.getListName() };
 		int[] types = { Types.INTEGER, Types.VARCHAR };
-		jdbcTemplate.update(SqlConstants.CREATE_NEW_LIST, args, types);
+		jdbcTemplate.update(ListConstants.CREATE_NEW_LIST, args, types);
 		List<String> names = list.getMovieNames();
 		for (String k : names) {
 			addMovieToList(list.getUserId(), list.getListName(), k);
@@ -96,7 +96,7 @@ public class ListDaoImpl implements ListDao {
 	public String addMovieToList(int userId, String listName, String name) throws Exception {
 		Object args[] = { userId, listName };
 		int[] types = { Types.INTEGER, Types.VARCHAR };
-		int lid = jdbcTemplate.query(SqlConstants.GET_LIST_ID, args, types, (ResultSet rs) -> {
+		int lid = jdbcTemplate.query(ListConstants.GET_LIST_ID, args, types, (ResultSet rs) -> {
 			if (rs.next())
 				return rs.getInt(1);
 			else
@@ -117,7 +117,7 @@ public class ListDaoImpl implements ListDao {
 			throw new Exception("List aldready contains this movie");
 		}
 		Object args2[] = { lid, name };
-		jdbcTemplate.update(SqlConstants.ADD_MOVIE_TOLIST, args2, types);
+		jdbcTemplate.update(ListConstants.ADD_MOVIE_TOLIST, args2, types);
 		return name;
 	}
 
@@ -125,7 +125,7 @@ public class ListDaoImpl implements ListDao {
 	public MovieList deleteMovieList(int uid, String lname) throws Exception {
 		Object args[] = { uid, lname };
 		int[] types = { Types.INTEGER, Types.VARCHAR };
-		int lid = jdbcTemplate.query(SqlConstants.GET_LIST_ID, args, types, (ResultSet rs) -> {
+		int lid = jdbcTemplate.query(ListConstants.GET_LIST_ID, args, types, (ResultSet rs) -> {
 			if (rs.next())
 				return rs.getInt(1);
 			else
@@ -136,10 +136,10 @@ public class ListDaoImpl implements ListDao {
 		MovieList list = getList(uid, lname);
 		Object[] args2 = { lid };
 		int[] types2 = { Types.INTEGER };
-		jdbcTemplate.update(SqlConstants.DELETE_MOVIES_OFLIST, args2, types2);
+		jdbcTemplate.update(ListConstants.DELETE_MOVIES_OFLIST, args2, types2);
 		Object[] args3 = { lid };
 		int[] types3 = { Types.INTEGER };
-		jdbcTemplate.update(SqlConstants.DELETE_MOVIE_LIST, args3, types3);
+		jdbcTemplate.update(ListConstants.DELETE_MOVIE_LIST, args3, types3);
 		return list;
 	}
 
@@ -149,7 +149,7 @@ public class ListDaoImpl implements ListDao {
 		List<String> names = list.getMovieNames();
 		Object args[] = { uid, lname };
 		int[] types = { Types.INTEGER, Types.VARCHAR };
-		int lid = jdbcTemplate.query(SqlConstants.GET_LIST_ID, args, types, (ResultSet rs) -> {
+		int lid = jdbcTemplate.query(ListConstants.GET_LIST_ID, args, types, (ResultSet rs) -> {
 			if (rs.next())
 				return rs.getInt(1);
 			else
@@ -159,17 +159,17 @@ public class ListDaoImpl implements ListDao {
 			throw new Exception("No such list");
 		Object args2[] = { list.getListName(), uid, lname };
 		int[] types2 = { Types.VARCHAR, Types.INTEGER, Types.VARCHAR };
-		jdbcTemplate.update(SqlConstants.UPDATE_LIST_NAME, args2, types2);
+		jdbcTemplate.update(ListConstants.UPDATE_LIST_NAME, args2, types2);
 		Object[] args3 = { lid };
 		int[] types3 = { Types.INTEGER };
 		for(String k:names) {
 			if(movieDao.getMovie(k)==null) throw new Exception("List contains invalid movies)");
 		}
-		jdbcTemplate.update(SqlConstants.DELETE_MOVIES_OFLIST, args3, types3);
+		jdbcTemplate.update(ListConstants.DELETE_MOVIES_OFLIST, args3, types3);
 		for (String k : names) {
 			Object[] args4 = { lid, k };
 			int[] types4 = { Types.INTEGER, Types.VARCHAR };
-			jdbcTemplate.update(SqlConstants.ADD_MOVIE_TOLIST, args4, types4);
+			jdbcTemplate.update(ListConstants.ADD_MOVIE_TOLIST, args4, types4);
 		}
 		return getList(list.getUserId(), list.getListName());
 
@@ -179,7 +179,7 @@ public class ListDaoImpl implements ListDao {
 	public String removeMovieFromList(int uid, String lname, String movieName) throws Exception {
 		Object args[] = { uid, lname };
 		int[] types = { Types.INTEGER, Types.VARCHAR };
-		int lid = jdbcTemplate.query(SqlConstants.GET_LIST_ID, args, types, (ResultSet rs) -> {
+		int lid = jdbcTemplate.query(ListConstants.GET_LIST_ID, args, types, (ResultSet rs) -> {
 			if (rs.next())
 				return rs.getInt(1);
 			else
@@ -189,7 +189,7 @@ public class ListDaoImpl implements ListDao {
 			throw new Exception("No such list");
 		Object args2[] = { lid, movieName };
 		int[] types2 = { Types.INTEGER, Types.VARCHAR };
-		int num = jdbcTemplate.update(SqlConstants.DELETE_MOVIE_FROMLIST, args2, types2);
+		int num = jdbcTemplate.update(ListConstants.DELETE_MOVIE_FROMLIST, args2, types2);
 		if (num == 0)
 			throw new Exception("No such movie");
 		return movieName;

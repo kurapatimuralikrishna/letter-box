@@ -32,7 +32,7 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	@Override
-	public Review getReview(int uid, String mname) {
+	public Review getReview(int uid, String mname) throws Exception{
 		Object[] args = { uid, mname };
 		int[] types = { Types.INTEGER, Types.INTEGER };
 		return jdbcTemplate.query(ReviewConstants.GET_REVIEW, args, types,

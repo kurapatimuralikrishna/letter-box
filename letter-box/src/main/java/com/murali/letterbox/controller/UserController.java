@@ -28,9 +28,7 @@ public class UserController {
 	@GetMapping(value="/users/{uid}")
 	public User getUser(@PathVariable int uid) {
 		try {
-			User user = service.getUser(uid);
-			if(user!=null) return user;
-			else throw new Exception("Check user id");
+			return service.getUser(uid);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
